@@ -65,13 +65,16 @@ import random
 import time
 
 pygame.init()
-width,height=1000,440
+width,height=1000,500
 screen=pygame.display.set_mode((width,height))
 FPS=pygame.time.Clock()
 active=False
 text=pygame.font.SysFont('comicsans',40)
 sentence=''
 box_width=400
+run=True
+start_bg=pygame.transform.scale(pygame.image.load(r"PyGame\speed typing\assets\start screen.jfif"),(width,height))
+
 
 lst=["Everyone ate the same thing.","Are you kidding?","I'm looking for my key.",
 "You can't miss it","Can she endure a long trip?","I promise you I'll keep you safe.",
@@ -92,6 +95,15 @@ while True:
 
         if event.type == pygame.MOUSEBUTTONDOWN:
             pos=pygame.mouse.get_pos()
+            if start_screen.collidepoint(pos):
+                # print('next')
+                run=False
+                screen.fill((255,255,255))
+                game_screen=pygame.transform.scale(pygame.image.load(r"PyGame\speed typing\assets\background.png"),(width,height-100))
+                screen.blit(game_screen,(0,20))
+
+
+
             if type_area.collidepoint(pos):
                 active=True
                 print(active)
@@ -103,6 +115,9 @@ while True:
 
         # rn set to False to test as soon as it opens
         if active==True:
+            # game_screen=pygame.transform.scale(pygame.image.load(r"PyGame\speed typing\assets\background.png"),(width,height-100))
+            # screen.blit(game_screen,(0,0))
+
 
             if event.type==pygame.KEYDOWN:
                 if len(sentence)==1:
@@ -130,21 +145,26 @@ while True:
 
         # print(event)
     keys=pygame.key.get_pressed()
-    screen.fill((50,70,255))
+    # screen.fill((50,70,255))
+    if run==False:
+        screen.fill((255,255,255))
+        game_screen=pygame.transform.scale(pygame.image.load(r"PyGame\speed typing\assets\background.png"),(width,height-100))
+        screen.blit(game_screen,(0,20))
 
-    test_text_sentence=text.render(f"{test_sentence}",1,(255,255,255))
-    screen.blit(test_text_sentence,(0,height//2-50))
+    test_text_sentence=text.render(f"{test_sentence}",1,(0,0,0))
+    screen.blit(test_text_sentence,(0,5))
 
 
     type_area=pygame.draw.rect(screen,(0,0,0),(0,height-100,width,height+100))
     player_typing=text.render(f"{sentence}" ,1,(255,255,255))
-    screen.blit(player_typing,(type_area.width-type_area.width+20,type_area.height+270))
+    screen.blit(player_typing,(type_area.width-type_area.width+20,type_area.height+340))
 
     if len(sentence)==len(test_sentence):
         print(sentence)
         sentence=''
         end_time = time.time()
         print(f"you took {round(end_time-start_time,5)} seconds to finish")
+        test_sentence=''
 
 
         if len(lst)==0:
@@ -156,6 +176,11 @@ while True:
         else:
             test_sentence=random.choice(lst)
     
+    if run==True:
+        start_screen=screen.blit(start_bg,(0,0))
+        start_game=text.render(f"Click any where to begin" ,1,(255,255,255))
+        screen.blit(start_game,(width//2-180,height-110))
+        # screen.fill((255,255,255))
 
     pygame.display.flip()
     FPS.tick(120)
